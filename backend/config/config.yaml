@@ -1,0 +1,39 @@
+# 服务配置
+server:
+  port: 8080
+  env: development
+  log_level: debug
+
+# 数据库配置
+database:
+  driver: mysql
+  host: localhost
+  port: 3306
+  user: root
+  password: password
+  dbname: learn_hub
+  max_open_conns: 100
+  max_idle_conns: 10
+  conn_max_lifetime: 3600
+
+# JWT 配置
+jwt:
+  secret: your-secret-key-change-in-production
+  expire_hours: 24
+  refresh_expire_hours: 720
+
+# OSS 配置
+oss:
+  provider: aliyun  # aliyun 或 tencent
+  endpoint: oss-cn-hangzhou.aliyuncs.com
+  access_key: your-access-key
+  secret_key: your-secret-key
+  bucket: learn-hub
+  region: cn-hangzhou
+
+# 日志配置
+log:
+  level: debug
+  format: json
+  output: stdout  # stdout 或 file
+  file_path: ./logs/app.log

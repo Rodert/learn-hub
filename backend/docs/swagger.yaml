@@ -1,0 +1,1246 @@
+basePath: /api/v1
+definitions:
+  handler.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  handler.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/handler.UserInfo'
+    type: object
+  handler.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  handler.UserInfo:
+    properties:
+      id:
+        type: integer
+      nickname:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  model.CourseRecord:
+    properties:
+      completed_at:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      material_id:
+        type: integer
+      progress_percent:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      view_duration:
+        type: integer
+    type: object
+  model.Exam:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      pass_score:
+        type: number
+      questions:
+        description: 关联
+        items:
+          $ref: '#/definitions/model.Question'
+        type: array
+      status:
+        type: string
+      time_limit:
+        type: integer
+      title:
+        type: string
+      total_score:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  model.Material:
+    properties:
+      content:
+        type: string
+      content_type:
+        type: string
+      cover_url:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      description:
+        type: string
+      file_size:
+        type: integer
+      file_url:
+        type: string
+      id:
+        type: integer
+      order_num:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Menu:
+    properties:
+      children:
+        description: 关联
+        items:
+          $ref: '#/definitions/model.Menu'
+        type: array
+      component:
+        type: string
+      created_at:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      order_num:
+        type: integer
+      parent_id:
+        type: integer
+      path:
+        type: string
+      permission:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      visible:
+        type: integer
+    type: object
+  model.Permission:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      resource:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Question:
+    properties:
+      answer:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      exam_id:
+        type: integer
+      explanation:
+        type: string
+      id:
+        type: integer
+      options:
+        type: string
+      order_num:
+        type: integer
+      question_type:
+        type: string
+      score:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      menus:
+        items:
+          $ref: '#/definitions/model.Menu'
+        type: array
+      name:
+        type: string
+      permissions:
+        description: 关联
+        items:
+          $ref: '#/definitions/model.Permission'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      nickname:
+        type: string
+      openid:
+        type: string
+      roles:
+        description: 关联
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+      status:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: 学习系统 MVP 后端 API 文档
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Learn Hub API
+  version: "1.0"
+paths:
+  /admin/permissions:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Permission'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取权限列表
+      tags:
+      - 管理员
+    post:
+      parameters:
+      - description: 权限数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Permission'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建权限
+      tags:
+      - 管理员
+  /admin/roles:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Role'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取角色列表
+      tags:
+      - 管理员
+    post:
+      parameters:
+      - description: 角色数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建角色
+      tags:
+      - 管理员
+  /admin/roles/{id}:
+    delete:
+      parameters:
+      - description: 角色 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: 删除角色
+      tags:
+      - 管理员
+    put:
+      parameters:
+      - description: 角色 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Role'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新角色
+      tags:
+      - 管理员
+  /admin/users:
+    get:
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户列表
+      tags:
+      - 管理员
+    post:
+      parameters:
+      - description: 用户数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建用户
+      tags:
+      - 管理员
+  /admin/users/{id}:
+    delete:
+      parameters:
+      - description: 用户 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: 删除用户
+      tags:
+      - 管理员
+    get:
+      parameters:
+      - description: 用户 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户详情
+      tags:
+      - 管理员
+    put:
+      parameters:
+      - description: 用户 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新用户
+      tags:
+      - 管理员
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 使用账号密码登录
+      parameters:
+      - description: 登录请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: 用户登录
+      tags:
+      - 认证
+  /auth/refresh:
+    post:
+      description: 使用旧 token 获取新 token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.Response'
+      security:
+      - Bearer: []
+      summary: 刷新 JWT Token
+      tags:
+      - 认证
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: 创建新用户账号
+      parameters:
+      - description: 注册请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.UserInfo'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: 用户注册
+      tags:
+      - 认证
+  /course-records:
+    get:
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取学习记录
+      tags:
+      - 学习记录
+  /course-records/{id}:
+    get:
+      parameters:
+      - description: 记录 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.CourseRecord'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取学习记录详情
+      tags:
+      - 学习记录
+    put:
+      parameters:
+      - description: 记录 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.CourseRecord'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新学习记录
+      tags:
+      - 学习记录
+  /exams:
+    get:
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取试卷列表
+      tags:
+      - 考试
+    post:
+      parameters:
+      - description: 试卷数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Exam'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建试卷
+      tags:
+      - 考试
+  /exams/{id}:
+    delete:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: 删除试卷
+      tags:
+      - 考试
+    get:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Exam'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取试卷详情
+      tags:
+      - 考试
+    put:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Exam'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新试卷
+      tags:
+      - 考试
+  /exams/{id}/records:
+    get:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取考试成绩
+      tags:
+      - 考试
+  /exams/{id}/start:
+    post:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 开始考试
+      tags:
+      - 考试
+  /exams/{id}/submit:
+    post:
+      parameters:
+      - description: 试卷 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 答题数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 提交答卷
+      tags:
+      - 考试
+  /materials:
+    get:
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: limit
+        type: integer
+      - description: 状态
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取资料列表
+      tags:
+      - 资料
+    post:
+      parameters:
+      - description: 资料数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Material'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建资料
+      tags:
+      - 资料
+  /materials/{id}:
+    delete:
+      parameters:
+      - description: 资料 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: 删除资料
+      tags:
+      - 资料
+    get:
+      parameters:
+      - description: 资料 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Material'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取资料详情
+      tags:
+      - 资料
+    put:
+      parameters:
+      - description: 资料 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Material'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新资料
+      tags:
+      - 资料
+  /menus:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Menu'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户菜单
+      tags:
+      - 菜单
+  /questions:
+    get:
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: limit
+        type: integer
+      - description: 题型
+        in: query
+        name: type
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取题目列表
+      tags:
+      - 题库
+    post:
+      parameters:
+      - description: 题目数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - Bearer: []
+      summary: 创建题目
+      tags:
+      - 题库
+  /questions/{id}:
+    delete:
+      parameters:
+      - description: 题目 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: 删除题目
+      tags:
+      - 题库
+    get:
+      parameters:
+      - description: 题目 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取题目详情
+      tags:
+      - 题库
+    put:
+      parameters:
+      - description: 题目 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Question'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新题目
+      tags:
+      - 题库
+  /users/{id}:
+    get:
+      parameters:
+      - description: 用户 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户信息
+      tags:
+      - 用户
+    put:
+      parameters:
+      - description: 用户 ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数据
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 更新用户信息
+      tags:
+      - 用户
+  /users/profile/me:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取当前用户信息
+      tags:
+      - 用户
+schemes:
+- http
+- https
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
