@@ -1,11 +1,8 @@
 package model
 
 import (
-	"database/sql/driver"
-	"encoding/json"
 	"time"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 

@@ -1,138 +1,57 @@
-# Learn Hub 管理后台
+# Ant Design Pro
 
-基于 React 18 + Ant Design Pro 的管理后台前端项目。
+This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
 
-## 项目结构
+## Environment Prepare
 
-```
-frontend-admin/
-├── src/
-│   ├── pages/              # 页面组件
-│   │   ├── Login.tsx       # 登录页
-│   │   ├── Dashboard.tsx   # 仪表盘
-│   │   ├── Materials.tsx   # 资料管理
-│   │   ├── Questions.tsx   # 题库管理
-│   │   ├── Exams.tsx       # 考试管理
-│   │   ├── Users.tsx       # 用户管理
-│   │   └── Roles.tsx       # 角色权限
-│   ├── layouts/            # 布局组件
-│   │   └── Layout.tsx      # 主布局
-│   ├── services/           # 服务层
-│   │   └── api.ts          # API 客户端
-│   ├── App.tsx             # 应用入口
-│   ├── main.tsx            # 主文件
-│   └── index.css           # 全局样式
-├── index.html              # HTML 模板
-├── vite.config.ts          # Vite 配置
-├── tsconfig.json           # TypeScript 配置
-├── package.json            # 项目依赖
-└── README.md               # 本文件
-```
-
-## 快速开始
-
-### 安装依赖
+Install `node_modules`:
 
 ```bash
 npm install
 ```
 
-### 开发模式
+or
 
 ```bash
-npm run dev
+yarn
 ```
 
-访问 `http://localhost:3000`
+## Provided Scripts
 
-### 生产构建
+Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
+
+Scripts provided in `package.json`. It's safe to modify or add additional script:
+
+### Start project
+
+```bash
+npm start
+```
+
+### Build project
 
 ```bash
 npm run build
 ```
 
-### 预览构建结果
+### Check code style
 
 ```bash
-npm run preview
+npm run lint
 ```
 
-## 技术栈
-
-- **React 18** - UI 框架
-- **TypeScript** - 类型检查
-- **Ant Design 5** - UI 组件库
-- **React Router 6** - 路由管理
-- **Zustand** - 状态管理
-- **Axios** - HTTP 客户端
-- **Vite** - 构建工具
-- **Tailwind CSS** - 样式框架
-
-## 功能模块
-
-- ✅ 登录/注册
-- ✅ 仪表盘
-- ⏳ 资料管理
-- ⏳ 题库管理
-- ⏳ 考试管理
-- ⏳ 用户管理
-- ⏳ 角色权限
-
-## 开发规范
-
-- 使用 TypeScript 进行类型检查
-- 遵循 ESLint 规则
-- 使用 Prettier 格式化代码
-- 组件使用函数式组件 + Hooks
-
-## 环境变量
-
-创建 `.env` 文件：
-
-```
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-```
-
-## 常见问题
-
-### Q: 如何连接后端 API？
-
-A: 在 `vite.config.ts` 中配置代理，或在 `.env` 中设置 API 地址。
-
-### Q: 如何添加新页面？
-
-A: 
-1. 在 `src/pages` 中创建新组件
-2. 在 `src/layouts/Layout.tsx` 中添加路由
-3. 在菜单中添加对应项
-
-## 部署
-
-### Docker 部署
+You can also use script to auto fix some lint error:
 
 ```bash
-docker build -t learn-hub-admin:latest .
-docker run -p 3000:3000 learn-hub-admin:latest
+npm run lint:fix
 ```
 
-### Nginx 部署
+### Test code
 
-```nginx
-server {
-    listen 80;
-    server_name admin.example.com;
-
-    location / {
-        root /usr/share/nginx/html;
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api {
-        proxy_pass http://backend:8080;
-    }
-}
+```bash
+npm test
 ```
 
-## 许可证
+## More
 
-MIT
+You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).

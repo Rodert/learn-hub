@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -109,10 +110,22 @@ func (h *QuestionHandlerImpl) CreateQuestion(c *gin.Context) {
 	}
 
 	userID, _ := c.Get("user_id")
+	
+	// 将 Options 转换为 JSON 字符串
+	var optionsJSON string
+	if req.Options != nil {
+		optionsBytes, _ := json.Marshal(req.Options)
+		optionsJSON = string(optionsBytes)
+	} else {
+		// 如果没有提供options，使用空数组
+		optionsJSON = "[]"
+	}
+	
 	question := &model.Question{
 		ExamID:      req.ExamID,
 		Type:        req.Type,
 		Content:     req.Content,
+		Options:     optionsJSON,
 		Answer:      req.Answer,
 		Explanation: req.Explanation,
 		Score:       req.Score,

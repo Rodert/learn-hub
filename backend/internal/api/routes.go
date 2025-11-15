@@ -6,6 +6,7 @@ import (
 	"learn-hub/config"
 	"learn-hub/internal/api/handler"
 	"learn-hub/internal/middleware"
+	"learn-hub/pkg/oss"
 )
 
 // RegisterRoutes 注册所有路由
@@ -27,6 +28,22 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	protected := router.Group("/api/v1")
 	protected.Use(middleware.AuthMiddleware(cfg.JWT.Secret))
 	{
+		// 初始化 OSS 客户端
+		ossClient, err := oss.NewOSSClient(cfg.OSS)
+		if err != nil {
+			// 如果 OSS 初始化失败，使用 nil（可以在 handler 中处理）
+			ossClient = nil
+		}
+
+		// 文件路由
+		files := protected.Group("/files")
+		{
+			fileHandler := handler.NewFileHandler(db, cfg, ossClient)
+			files.POST("/upload", fileHandler.Upload)
+			files.POST("/delete", fileHandler.Delete)
+			files.POST("/presigned-url", fileHandler.GetPresignedURL)
+		}
+
 		// 用户路由
 		users := protected.Group("/users")
 		{
@@ -86,6 +103,15 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB, cfg *config.Config) {
 		{
 			menuHandler := handler.NewMenuHandlerImpl(db)
 			menus.GET("", menuHandler.GetMenus)
+		}
+
+		// 导入导出路由
+		importExport := protected.Group("/import-export")
+		{
+			importExportHandler := handler.NewImportExportHandler(db)
+			importExport.POST("/questions", middleware.RequirePermission("questions:manage"), importExportHandler.ImportQuestions)
+			importExport.POST("/users", middleware.RequirePermission("users:manage"), importExportHandler.ImportUsers)
+			importExport.GET("/exam-scores", middleware.RequirePermission("users:view"), importExportHandler.ExportExamScores)
 		}
 
 		// 管理员路由

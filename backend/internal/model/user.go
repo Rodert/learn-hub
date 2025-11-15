@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 

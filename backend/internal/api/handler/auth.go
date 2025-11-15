@@ -184,22 +184,78 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	})
 }
 
+// RefreshTokenRequest 刷新 token 请求
+type RefreshTokenRequest struct {
+	Token string `json:"token" binding:"required"`
+}
+
 // RefreshToken 刷新 token
 // @Summary 刷新 JWT Token
 // @Description 使用旧 token 获取新 token
 // @Tags 认证
-// @Security Bearer
+// @Accept json
 // @Produce json
+// @Param request body RefreshTokenRequest true "刷新 token 请求"
 // @Success 200 {object} Response{data=map[string]string}
+// @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Router /auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
-	// TODO: 实现 token 刷新逻辑
+	var req RefreshTokenRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 解析旧 token
+	token, err := jwt.Parse(req.Token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(h.cfg.JWT.Secret), nil
+	})
+
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	userID := int64(claims["sub"].(float64))
+
+	// 获取用户信息
+	var user model.User
+	if err := h.db.Preload("Roles").First(&user, userID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 检查用户状态
+	if user.Status != "active" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User is not active"})
+		return
+	}
+
+	// 获取用户权限
+	permissions, err := h.getUserPermissions(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 生成新的 token
+	newToken, err := h.generateToken(user, permissions)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"code": 0,
+		"code":    0,
 		"message": "success",
 		"data": gin.H{
-			"token": "new-token",
+			"token": newToken,
 		},
 	})
 }

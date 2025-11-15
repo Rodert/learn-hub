@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"gorm.io/datatypes"
 	"learn-hub/internal/model"
 	"learn-hub/internal/repository"
 )
@@ -51,7 +50,7 @@ func (s *ExamService) StartExam(userID, examID int64) (*model.ExamRecord, error)
 		ExamID:    examID,
 		Status:    "in_progress",
 		StartTime: &now,
-		Answers:   datatypes.JSON([]byte("[]")),
+		Answers:   "[]",
 	}
 
 	if err := s.recordRepo.Create(newRecord); err != nil {
@@ -71,12 +70,6 @@ func (s *ExamService) SubmitExam(recordID int64, answers []AnswerItem) (float64,
 
 	if record.Status != "in_progress" {
 		return 0, errors.New("exam not in progress")
-	}
-
-	// 获取试卷信息
-	exam, err := s.examRepo.GetByID(record.ExamID)
-	if err != nil {
-		return 0, err
 	}
 
 	// 获取所有题目
@@ -115,7 +108,7 @@ func (s *ExamService) SubmitExam(recordID int64, answers []AnswerItem) (float64,
 	record.Status = "graded"
 	record.SubmitTime = &now
 	record.Score = &totalScore
-	record.Answers = datatypes.JSON(mustMarshal(answers))
+	record.Answers = string(mustMarshal(answers))
 
 	if err := s.recordRepo.Update(record); err != nil {
 		return 0, err
