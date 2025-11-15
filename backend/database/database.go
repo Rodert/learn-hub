@@ -72,11 +72,21 @@ func InitDB() {
 
 // AutoMigrate 自动迁移数据库表
 func AutoMigrate() {
+	// 先迁移基础表（不包含外键依赖的）
 	err := DB.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Menu{},
 		&models.Rule{},
+		&models.Course{},
+	)
+	if err != nil {
+		log.Fatal("数据库迁移失败:", err)
+	}
+
+	// 再迁移有外键依赖的表（外键约束已禁用）
+	err = DB.AutoMigrate(
+		&models.CourseRecord{},
 	)
 
 	if err != nil {

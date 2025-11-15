@@ -6,9 +6,13 @@ import * as api from './api';
 import * as login from './login';
 import * as user from './user';
 import * as role from './role';
+import * as course from './course';
+import * as progress from './progress';
 export default {
   api,
   login,
   user,
   role,
+  course,
+  progress,
 };

@@ -141,4 +141,40 @@ declare namespace API {
     icon?: string;
     access?: string;
   };
+
+  type CourseListItem = {
+    id?: number;
+    title?: string;
+    description?: string;
+    coverImage?: string;
+    contentType?: number; // 1-视频，2-文本，3-混合
+    videoUrl?: string;
+    textContent?: string;
+    duration?: number; // 视频时长（秒）
+    status?: number; // 0-草稿，1-已发布，2-已下架
+    sortOrder?: number;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type ProgressListItem = {
+    userId?: number;
+    username?: string;
+    name?: string;
+    progress?: number;
+    duration?: number;
+    isCompleted?: boolean;
+    completedAt?: string;
+    lastStudyAt?: string;
+  };
+
+  type UserProgressItem = {
+    courseId?: number;
+    courseTitle?: string;
+    progress?: number;
+    duration?: number;
+    isCompleted?: boolean;
+    completedAt?: string;
+    lastStudyAt?: string;
+  };
 }

@@ -32,6 +32,9 @@ func SetupRoutes() *gin.Engine {
 	ruleCtrl := controllers.NewRuleController()
 	userCtrl := controllers.NewUserController()
 	roleCtrl := controllers.NewRoleController()
+	courseCtrl := controllers.NewCourseController()
+	learnCtrl := controllers.NewLearnController()
+	progressCtrl := controllers.NewProgressController()
 
 	// API路由组
 	api := r.Group("/api")
@@ -71,9 +74,26 @@ func SetupRoutes() *gin.Engine {
 			api.PUT("/role/:id", roleCtrl.UpdateRole)
 			api.DELETE("/role/:id", roleCtrl.DeleteRole)
 			api.GET("/role/menus", roleCtrl.GetAllMenus)
+
+			// 课程管理相关（管理员）
+			api.GET("/course/list", courseCtrl.GetCourseList)
+			api.GET("/course/:id", courseCtrl.GetCourseDetail)
+			api.POST("/course", courseCtrl.CreateCourse)
+			api.PUT("/course/:id", courseCtrl.UpdateCourse)
+			api.DELETE("/course/:id", courseCtrl.DeleteCourse)
+			api.POST("/course/:id/publish", courseCtrl.PublishCourse)
+
+			// 学习相关（员工端）
+			api.GET("/learn/courses", learnCtrl.GetCourses)
+			api.GET("/learn/course/:id", learnCtrl.GetCourseDetail)
+			api.POST("/learn/course/:id/progress", learnCtrl.UpdateProgress)
+			api.POST("/learn/course/:id/complete", learnCtrl.CompleteCourse)
+
+			// 学习进度查看（管理员）
+			api.GET("/admin/course/:id/progress", progressCtrl.GetCourseProgress)
+			api.GET("/admin/user/:id/progress", progressCtrl.GetUserProgress)
 		}
 	}
 
 	return r
 }
-

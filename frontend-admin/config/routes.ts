@@ -72,6 +72,24 @@ export default [
     ],
   },
   {
+    path: '/course',
+    name: 'course',
+    icon: 'book',
+    access: 'canAdmin',
+    routes: [
+      {
+        path: '/course',
+        name: 'course-list',
+        component: './course',
+      },
+      {
+        path: '/course/progress',
+        name: 'course-progress',
+        component: './course/progress',
+      },
+    ],
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
